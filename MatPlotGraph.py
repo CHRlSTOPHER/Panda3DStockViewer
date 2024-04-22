@@ -11,13 +11,14 @@ def draw_chart_graph(graph_points, high):
     y_points = []
     i = 0
     for point in graph_points:
-        # determine x value based on market duration
-        x_point = (i / SG.MARKET_DURATION) * (SG.MARKET_DURATION / 10)
-        x_points.append(x_point)
+        if point:
+            # determine x value based on market duration
+            x_point = (i / SG.MARKET_DURATION) * (SG.MARKET_DURATION / 10)
+            x_points.append(x_point)
 
-        # determine y value based on max high and the ratio
-        y_point = (point / high) * SG.Z_RATIO
-        y_points.append(y_point)
+            # determine y value based on max high and the ratio
+            y_point = (point / high) * SG.Z_RATIO
+            y_points.append(y_point)
         i += 1
     x_points = np.array(x_points)
     y_points = np.array(y_points)

@@ -20,16 +20,18 @@ class Panda3dGraph(ShowBase, StockScrapper):
         self.line_seg.set_thickness(SG.LINE_THICKNESS)
         i = 0
         for point in self.graph_points:
-            # determine x value based on market duration
-            x_point = (i / SG.MARKET_DURATION) * SG.X_MULTIPLIER
-            # determine z value based on max high and the ratio
-            z_point = point / self.high * SG.Z_RATIO
-            # move pointer to next point
-            self.line_seg.draw_to(x_point, 0, z_point)
+            x_point = i
+            if point:
+                # determine z value based on max high and the ratio
+                z_point = point / self.high * SG.Z_RATIO
+                # move pointer to next point
+                self.line_seg.draw_to(x_point, 0, z_point)
             i += 1
+
         self.line_graph = self.line_seg.create()
         self.graph_node = self.render.attach_new_node(self.line_graph)
         self.graph_node.set_z(-SG.Z_RATIO)
+        self.graph_node.set_scale(.05, 1, 1)
 
 
 scene = Panda3dGraph()

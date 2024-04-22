@@ -41,7 +41,7 @@ class StockScrapper:
         self.end_time = result["meta"][SG.TRADE_PERIOD]["regular"]["end"]
         # get all the points of the graph that exist so far
         self.graph_points = result['indicators']['quote'][0]['close']
-        self.high = max(*self.graph_points)
+        self.high = self.get_high_price()
 
     def append_current_price(self):
         pass
@@ -82,3 +82,10 @@ class StockScrapper:
                                     headers={'user-agent': SG.USER_AGENT,
                                              'cookie': self.cookie})
         return company_data.json()
+
+    def get_high_price(self):
+        valid_points = []
+        for point in self.graph_points:
+            if point:
+                valid_points.append(point)
+        return max(*valid_points)
