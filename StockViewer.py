@@ -77,6 +77,8 @@ class StockViewer(ShowBase):
     def refresh_graph(self, task):
         graph = self.stock_graphs[task.get_name()]
         graph.update()
+        if graph.end_of_day:
+            return task.done  # market hours are over.
         return task.again
 
 

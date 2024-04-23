@@ -25,6 +25,7 @@ class StockGraph(NodePath):
         self.low = 0
         self.high = 0
         self.price_text_node = None
+        self.end_of_day = False
         self.draw_sequence = Sequence()
 
     def scrape_stock_data(self):
@@ -33,6 +34,7 @@ class StockGraph(NodePath):
         result = self.chart_data["chart"]["result"][0]
         self.graph_points = result['indicators']['quote'][0]['close']
         self.low, self.high = self.get_low_and_high_price()
+        self.end_time = result["meta"][SG.TRADE_PERIOD]["regular"]["end"]
 
     def generate_graph(self, wait=.01):
         line_collection = self.create_lines()
@@ -84,6 +86,9 @@ class StockGraph(NodePath):
         market_time = result["price"]["regularMarketTime"]
         minutes = math.floor(market_time / 60)
         market_price = result["price"]["regularMarketPrice"]["raw"]
+        # check if market hours are over.
+        if market_time >= self.end_time:
+            self.end_of_day = True
 
         # check if last_minute has been defined
         if not self.last_minute:
