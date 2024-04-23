@@ -14,5 +14,5 @@ CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
 MARKET_DURATION = 390  # this is in minutes
 Z_RATIO = 75
-LINE_THICKNESS = 2
+LINE_THICKNESS = 3
 X_MULTIPLIER = 6
