@@ -7,31 +7,23 @@ from direct.showbase.ShowBase import ShowBase
 from direct.interval.IntervalGlobal import Sequence, Func, Wait
 from panda3d.core import loadPrcFileData
 
-from StockGraph import StockGraph
+from StockGraph import StockGraph, get_crumb
 import StockGlobals as SG
 
 loadPrcFileData("", f"win-size {SG.WIN_SIZE}")
+loadPrcFileData('', 'win-fixed-size 1')
 
 # put stocks here since user may want to switch them out daily.
 STOCKS = [
-    'NVDA',
-    "SMCI",
-    "MSFT",
-    "AMD",
-    "GFAI",
+    ('NVDA', 891.25),
+    ("SMCI", 765.40),
+    ("MSFT", None),
+    ("GFAI", None),
+    ("MSCI", None),
+    ("QUBT", None),
 ]
 # Up to 6 stocks can be drawn
 STOCKS = STOCKS[:6]
-
-
-def get_crumb():
-    request = requests.get(SG.YAHOO_FINANCE_WEBSITE)
-    cookie_data = request.headers['set-cookie']
-    cookie = cookie_data.split(";")[0]
-    request = requests.get(SG.FINANCE_URL + SG.CRUMB,
-                           headers={'user-agent': SG.USER_AGENT,
-                                    'cookie': cookie})
-    return request.text, cookie
 
 
 class StockViewer(ShowBase):
@@ -54,14 +46,16 @@ class StockViewer(ShowBase):
         self.crumb, self.cookie = get_crumb()
 
         i = 0
-        for stock in STOCKS:
-            self.generate_sequence.append(Func(self.create_stock_graph, stock))
+        for stock, investment in STOCKS:
+            self.generate_sequence.append(Func(self.create_stock_graph,
+                                               stock, investment))
             self.generate_sequence.append((Func(self.adjust_graph, stock, i)))
             self.generate_sequence.append(Wait(SG.PAUSE_DURATION))
             i += 1
 
-    def create_stock_graph(self, stock_name):
-        stock_graph = StockGraph(self, stock_name, self.crumb, self.cookie)
+    def create_stock_graph(self, stock_name, investment):
+        stock_graph = StockGraph(self, stock_name, investment,
+                                 self.crumb, self.cookie)
         stock_graph.scrape_stock_data()
         stock_graph.generate_graph()
         self.stock_graphs[stock_name] = stock_graph
@@ -84,5 +78,5 @@ class StockViewer(ShowBase):
 
 stock_viewer = StockViewer()
 stock_viewer.disable_mouse()
-stock_viewer.camera.set_pos(1.5, -30, 0)
+stock_viewer.camera.set_pos(1.75, -32, 0)
 stock_viewer.run()

@@ -16,15 +16,23 @@ MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
 
 LINE_THICKNESS = 2.0
-Z_RATIO = 175
+Z_MULTIPLIER = 100
 X_MULTIPLIER = 6
+# parent node of graph scale
 GRAPH_SCALE = 0.4
+# actual graph scale
+GRAPH_SX = .065
+GRAPH_SZ = -.24
 
 # TextNode
 STOCK_POS = (-10, -.5, -10)
-STOCK_SCALE = 2.0
+STOCK_SCALE = 2.5
 TEXT_POS = (10, -.5, -10)
-TEXT_SCALE = 2.0
+TEXT_SCALE = 3.0
+INVEST_POS = (-5, 0, -9)
+INVEST_SCALE = 1.5
+COMPARE_POS = (5, 0, -11)
+COMPARE_SCALE = 1.5
 
 X_POS = 15
 Z_POS = 10
@@ -34,5 +42,5 @@ GRAPH_POSITIONS = [
     (X_POS, 0, Z_POS / 2),
     (-X_POS, 0, -Z_POS / 2 + 2),
     (0, 0, -Z_POS / 2 + 2),
-    (-X_POS, 0, -Z_POS / 2 + 2),
+    (X_POS, 0, -Z_POS / 2 + 2),
 ]
