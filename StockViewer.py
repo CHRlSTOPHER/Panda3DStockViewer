@@ -35,6 +35,7 @@ class StockViewer(ShowBase):
         self.stock_graphs = {}
         self.refresh_sequences = {}
         self.refresh_period = len(STOCKS)
+        self.end_of_day = False
 
         # put a short interval between each graph creation
         # to avoid spamming the server
@@ -77,6 +78,12 @@ class StockViewer(ShowBase):
         graph = self.stock_graphs[stock_name]
         graph.update()
         if graph.end_of_day:
+            # occasionally chart data will not return the proper market end
+            # time, making the if check believe the market is still active.
+            # so as long as one graph says it is end of day,
+            # then we can assume it is end of day for all.
+            self.end_of_day = True
+        if self.end_of_day:
             self.refresh_sequences[stock_name].finish()
 
 
