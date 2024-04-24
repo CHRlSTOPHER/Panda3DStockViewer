@@ -15,6 +15,11 @@ WIN_SIZE = "1600, 600"
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
 
+GREEN = (.2, 1, .2, 1)
+RED = (1, .2, .2, 1)
+GOLD = (1, 1, .75, 1)
+GRAY = (.8, .8, .8, 1)
+
 LINE_THICKNESS = 2.0
 Z_MULTIPLIER = 100
 X_MULTIPLIER = 6
@@ -29,10 +34,10 @@ STOCK_POS = (-10, -.5, -10)
 STOCK_SCALE = 2.5
 TEXT_POS = (10, -.5, -10)
 TEXT_SCALE = 3.0
-INVEST_POS = (-5, 0, -9)
-INVEST_SCALE = 1.5
-COMPARE_POS = (5, 0, -11)
-COMPARE_SCALE = 1.5
+INVEST_POS = (0.0, 0, -9.25)
+INVEST_SCALE = 1.9
+COMPARE_POS = (6.25, 0, -10.25)
+COMPARE_SCALE = 1.9
 
 X_POS = 15
 Z_POS = 10

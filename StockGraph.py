@@ -1,9 +1,10 @@
 import requests
 import math
 
-from panda3d.core import LineSegs, NodePath, TextNode
+from panda3d.core import LineSegs, NodePath
 from direct.interval.IntervalGlobal import Sequence, Func, Wait
 
+from StockTextNodes import StockTextNodes
 import StockGlobals as SG
 
 
@@ -17,10 +18,11 @@ def get_crumb():
     return request.text, cookie
 
 
-class StockGraph(NodePath):
+class StockGraph(NodePath, StockTextNodes):
 
     def __init__(self, showbase, stock_name, investment, crumb, cookie):
         NodePath.__init__(self, "stock_graph")
+        StockTextNodes.__init__(self, stock_name, self)
         self.showbase = showbase
         self.stock_name = stock_name
         self.investment = investment
@@ -36,7 +38,7 @@ class StockGraph(NodePath):
         self.last_price = 0
         self.low = 0
         self.high = 0
-        self.price_text_node = None
+
         self.end_of_day = False
         self.draw_sequence = Sequence()
 
@@ -61,15 +63,14 @@ class StockGraph(NodePath):
         self.draw_sequence.start()
 
         self.generate_company_text()
-        self.generate_price_text()
+        self.generate_price_text(self.point)
         if self.investment:
-            self.generate_investment_comparison()
+            self.generate_investment_comparison(self.investment, self.point)
 
     def create_lines(self):
-        if self.line_seg:
-            self.line_seg.reset()  # clean up existing line
+        self.cleanup_graph()
         self.line_seg = LineSegs()
-        self.line_seg.set_color(1, 0, 0, 1)
+        self.line_seg.set_color(*SG.RED)
         self.line_seg.set_thickness(SG.LINE_THICKNESS)
 
         line_collection = []
@@ -78,9 +79,9 @@ class StockGraph(NodePath):
         self.point = self.graph_points[0]
         for point in self.graph_points:
             # store this in the class for later use.
-            self.point = point
             x_point = self.x
-            if self.point:
+            if point:
+                self.point = point
                 # get the amount between high and low
                 max_difference = self.high - self.low
                 current_difference = self.high - self.point
@@ -130,8 +131,12 @@ class StockGraph(NodePath):
             # update minute
             self.last_minute = minutes
 
-        # update the price text
         self.update_price_text(market_price)
+        if self.investment and market_price:
+            # update the price and comparison text
+            difference = market_price - self.investment
+            difference = math.floor(difference * 100)/100.0
+            self.update_comparison_text(difference)
 
         #print(f"{self.stock_name}: EPOCH: {math.floor(market_time / 60)},"
         #      f" ${market_price}")
@@ -144,50 +149,8 @@ class StockGraph(NodePath):
         self.scrape_stock_data()
         self.generate_graph()
 
-    def generate_company_text(self):
-        self.stock_text = TextNode("stock_text")
-        self.stock_text.set_text(self.stock_name)
-        self.stock_text.set_shadow(0.05, 0.05)
-        self.stock_text_node = self.attach_new_node(self.stock_text)
-        self.stock_text_node.set_pos(SG.STOCK_POS)
-        self.stock_text_node.set_scale(SG.STOCK_SCALE)
-        self.stock_text_node.set_depth_write(0)
-
-    def generate_price_text(self):
-        string_price = ""
-        if self.point:
-            self.last_price = math.floor(self.point * 100)/100.0
-            string_price = str(self.last_price)
-        self.price_text = TextNode("price_text")
-        self.price_text.set_text(string_price)
-        self.price_text.set_shadow(0.05, 0.05)
-        self.price_text_node = self.attach_new_node(self.price_text)
-        self.price_text_node.set_pos(SG.TEXT_POS)
-        self.price_text_node.set_scale(SG.TEXT_SCALE)
-        self.price_text_node.set_depth_write(0)
-
-    def generate_investment_comparison(self):
-        self.investment_text = TextNode('investment')
-        self.investment_text.set_text(str(self.investment))
-
-        self.comparison_text = TextNode('compare_price')
-
-    def update_price_text(self, price):
-        if price > self.last_price:  # price increase
-            color = (.2, 1, .2, 1)
-        elif price < self.last_price:  # price decrease
-            color = (1, .2, .2, 1)
-        else:
-            color = (.85, .85, .85, 1)  # no change
-
-        string_price = str(math.floor(price * 100)/100.0)
-        self.price_text.set_text(string_price)
-        self.price_text_node.colorScaleInterval(4.5, (1, 1, 1, 1), color,
-                                                blendType='easeIn').start()
-        self.last_price = price
-
     def append_new_line(self, price):
-        self.line_seg.set_color(1, 0, 0, 1)
+        self.line_seg.set_color(*SG.RED)
         # add the new value to the graph
         x_point = self.x
         # get the amount between high and low
@@ -237,3 +200,10 @@ class StockGraph(NodePath):
             if point:
                 valid_points.append(point)
         return min(*valid_points), max(*valid_points)
+
+    def cleanup_graph(self):
+        self.detach_node()
+        NodePath.__init__(self, "stock_graph")
+        if self.line_seg:
+            self.line_seg.reset()  # clean up existing line
+            self.line_seg = None
