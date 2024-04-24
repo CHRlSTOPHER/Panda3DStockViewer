@@ -1,3 +1,5 @@
+STOCK_JSON = "stocks.json"
+
 FINANCE_URL = "https://query1.finance.yahoo.com/"
 CRUMB = "v1/test/getcrumb"
 COMPANY_DATA = "v10/finance/quoteSummary/"
@@ -14,6 +16,7 @@ CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 WIN_SIZE = "1600 600"
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
+STOCK_LIMIT = 6
 
 GREEN = (.2, 1, .2, 1)
 RED = (1, .2, .2, 1)

@@ -47,16 +47,22 @@ class StockGraph(NodePath, StockTextNodes):
     def scrape_stock_data(self):
         # we define this to determine the past graph points
         self.chart_data = self.get_chart_data()
+        if self.chart_data['chart']['result'] == None:
+            print(f"{self.stock_name} not found.")
+            return False
         result = self.chart_data["chart"]["result"][0]
         self.end_time = result["meta"][SG.TRADE_PERIOD]["regular"]["end"]
+        self.previous_close = result["meta"]["previousClose"]
         self.graph_points = result['indicators']['quote'][0]['close']
         self.low, self.high = self.get_low_and_high_price()
         # only include 2 decimal places.
         self.high = math.floor(self.high * 100)/100.0
         self.low = math.floor(self.low * 100)/100.0
+        return True
 
     def generate_graph(self, wait=.01):
-        line_collection = self.create_lines()
+        line_collection = self.create_stock_lines()
+        self.create_bg_graph()
 
         self.draw_sequence.append(Wait(.1))
         for geom_node in line_collection:
@@ -69,7 +75,7 @@ class StockGraph(NodePath, StockTextNodes):
         if self.investment:
             self.generate_investment_comparison(self.investment, self.point)
 
-    def create_lines(self):
+    def create_stock_lines(self):
         self.cleanup_graph()
         self.line_seg = LineSegs()
         self.line_seg.set_color(*SG.RED)
@@ -109,6 +115,9 @@ class StockGraph(NodePath, StockTextNodes):
         graph_node.set_pos(-10, 0, 18)
         graph_node.set_scale(SG.GRAPH_SX, 1, SG.GRAPH_SZ)
         self.reparent_to(self.showbase.render)
+
+    def create_bg_graph(self):
+        pass
 
     def update(self):
         company_data = self.get_company_data()
