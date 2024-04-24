@@ -33,6 +33,7 @@ class StockViewer(ShowBase):
         self.crumb = None
         self.cookie = None
         self.stock_graphs = {}
+        self.refresh_sequences = {}
         self.refresh_period = len(STOCKS)
 
         # put a short interval between each graph creation
@@ -48,32 +49,35 @@ class StockViewer(ShowBase):
         i = 0
         for stock, investment in STOCKS:
             self.generate_sequence.append(Func(self.create_stock_graph,
-                                               stock, investment))
+                                               stock, investment, len(STOCKS)))
             self.generate_sequence.append((Func(self.adjust_graph, stock, i)))
             self.generate_sequence.append(Wait(SG.PAUSE_DURATION))
             i += 1
 
-    def create_stock_graph(self, stock_name, investment):
-        stock_graph = StockGraph(self, stock_name, investment,
+    def create_stock_graph(self, stock_name, investment, stock_len):
+        stock_graph = StockGraph(self, stock_name, investment, stock_len,
                                  self.crumb, self.cookie)
         stock_graph.scrape_stock_data()
         stock_graph.generate_graph()
         self.stock_graphs[stock_name] = stock_graph
+
         # refresh once every x amount of seconds. based on number of stocks.
-        self.taskMgr.doMethodLater(self.refresh_period, self.refresh_graph,
-                                   f"{stock_name}")
+        refresh_sequence = Sequence()
+        refresh_sequence.append(Func(self.refresh_graph, stock_name))
+        refresh_sequence.append(Wait(self.refresh_period))
+        refresh_sequence.loop()
+        self.refresh_sequences[stock_name] = refresh_sequence
 
     def adjust_graph(self, stock_name, i):
         graph = self.stock_graphs[stock_name]
         graph.set_pos(SG.GRAPH_POSITIONS[i])
         graph.set_scale(SG.GRAPH_SCALE)
 
-    def refresh_graph(self, task):
-        graph = self.stock_graphs[task.get_name()]
+    def refresh_graph(self, stock_name):
+        graph = self.stock_graphs[stock_name]
         graph.update()
         if graph.end_of_day:
-            return task.done  # market hours are over.
-        return task.again
+            self.refresh_sequences[stock_name].finish()
 
 
 stock_viewer = StockViewer()

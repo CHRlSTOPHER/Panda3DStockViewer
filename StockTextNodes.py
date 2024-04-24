@@ -78,7 +78,7 @@ class StockTextNodes:
         self.comparison_text.set_text(str(difference))
         self.color_investment(difference)
 
-    def update_price_text(self, price):
+    def update_price_text(self, price, stock_len):
         if price > self.last_price:  # price increase
             color = SG.GREEN
         elif price < self.last_price:  # price decrease
@@ -88,6 +88,7 @@ class StockTextNodes:
 
         string_price = str(math.floor(price * 100) / 100.0)
         self.price_text.set_text(string_price)
-        self.price_text_node.colorScaleInterval(4.5, (1, 1, 1, 1), color,
+        self.price_text_node.colorScaleInterval(stock_len - .5,
+                                                (1, 1, 1, 1), color,
                                                 blendType='easeIn').start()
         self.last_price = price

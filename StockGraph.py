@@ -20,12 +20,14 @@ def get_crumb():
 
 class StockGraph(NodePath, StockTextNodes):
 
-    def __init__(self, showbase, stock_name, investment, crumb, cookie):
+    def __init__(self, showbase, stock_name, investment, stock_len,
+                 crumb, cookie):
         NodePath.__init__(self, "stock_graph")
         StockTextNodes.__init__(self, stock_name, self)
         self.showbase = showbase
         self.stock_name = stock_name
         self.investment = investment
+        self.stock_len = stock_len
         self.crumb = crumb
         self.cookie = cookie
         self.chart_data = None
@@ -131,7 +133,7 @@ class StockGraph(NodePath, StockTextNodes):
             # update minute
             self.last_minute = minutes
 
-        self.update_price_text(market_price)
+        self.update_price_text(market_price, self.stock_len)
         if self.investment and market_price:
             # update the price and comparison text
             difference = market_price - self.investment

@@ -11,7 +11,7 @@ TRADE_PERIOD = "currentTradingPeriod"
 CHART_INTERVAL = ["1m", "2m", "5m"]
 CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
-WIN_SIZE = "1600, 600"
+WIN_SIZE = "1600 600"
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
 
