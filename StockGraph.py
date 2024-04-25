@@ -121,7 +121,7 @@ class StockGraph(NodePath, StockTextNodes):
 
     def render_line(self, geom_node):
         graph_node = self.attach_new_node(geom_node)
-        graph_node.set_pos(-10, 0, 18)
+        graph_node.set_pos(SG.GRAPH_POS)
         graph_node.set_scale(SG.GRAPH_SX, 1, SG.GRAPH_SZ)
         self.graph_nodes.append(graph_node)
         self.reparent_to(self.showbase.render)
@@ -140,6 +140,9 @@ class StockGraph(NodePath, StockTextNodes):
 
     def update(self):
         company_data = self.get_company_data()
+        if not company_data:
+            print(f"Company Data for {self.stock_name} not found.")
+            return
         result = company_data["quoteSummary"]["result"][0]
         market_time = result["price"]["regularMarketTime"]
         minutes = math.floor(market_time / 60)

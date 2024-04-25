@@ -35,10 +35,11 @@ GRAY = (.8, .8, .8, 1)
 LINE_THICKNESS = 2.0
 Z_MULTIPLIER = 100
 X_MULTIPLIER = 6
-# parent node of graph scale
+
+GRAPH_POS = (-10, 0, 18)
 GRAPH_SCALE = 0.4
 # actual graph scale
-GRAPH_SX = .065
+GRAPH_SX = .07
 GRAPH_SZ = -.24
 
 # TextNode
