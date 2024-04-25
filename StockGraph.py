@@ -44,7 +44,7 @@ class StockGraph(NodePath, StockTextNodes):
         self.end_of_day = False
         self.draw_sequence = Sequence()
 
-    def scrape_stock_data(self):
+    def scrape_stock_data(self, get_limits=True):
         # we define this to determine the past graph points
         self.chart_data = self.get_chart_data()
         if self.chart_data['chart']['result'] == None:
@@ -53,11 +53,13 @@ class StockGraph(NodePath, StockTextNodes):
         result = self.chart_data["chart"]["result"][0]
         self.end_time = result["meta"][SG.TRADE_PERIOD]["regular"]["end"]
         self.previous_close = result["meta"]["previousClose"]
+        del self.graph_points
         self.graph_points = result['indicators']['quote'][0]['close']
-        self.low, self.high = self.get_low_and_high_price()
-        # only include 2 decimal places.
-        self.high = math.floor(self.high * 100)/100.0
-        self.low = math.floor(self.low * 100)/100.0
+        if get_limits:
+            self.low, self.high = self.get_low_and_high_price()
+            self.high = math.floor(self.high * 100)/100.0
+            self.low = math.floor(self.low * 100)/100.0
+        self.previous_close = math.floor(self.previous_close * 100) / 100
         return True
 
     def generate_graph(self, wait=.01):
@@ -72,6 +74,7 @@ class StockGraph(NodePath, StockTextNodes):
 
         self.generate_company_text()
         self.generate_price_text(self.point)
+        self.generate_limits_text(self.high, self.low, self.previous_close)
         if self.investment:
             self.generate_investment_comparison(self.investment, self.point)
 
@@ -125,6 +128,7 @@ class StockGraph(NodePath, StockTextNodes):
         market_time = result["price"]["regularMarketTime"]
         minutes = math.floor(market_time / 60)
         market_price = result["price"]["regularMarketPrice"]["raw"]
+        market_price = math.floor(market_price * 100)/100.0
         # check if market hours are over.
         if market_time >= self.end_time:
             self.end_of_day = True
@@ -133,7 +137,13 @@ class StockGraph(NodePath, StockTextNodes):
         if not self.last_minute:
             self.last_minute = minutes
 
-        if market_price > self.high or market_price < self.low:
+        if market_price > self.high:
+            self.high = market_price
+            self.update_high_text(market_price)
+            self.remake_graph()
+        elif market_price < self.low:
+            self.low = market_price
+            self.update_low_text(market_price)
             self.remake_graph()
         # check if it has been a minute since the last update
         elif minutes != self.last_minute:
@@ -155,9 +165,8 @@ class StockGraph(NodePath, StockTextNodes):
     def remake_graph(self):
         # update the graph data
         self.crumb, self.cookie = get_crumb()
-        for child in self.get_children():
-            child.remove_node()
-        self.scrape_stock_data()
+        self.cleanup_graph()
+        self.scrape_stock_data(get_limits=False)
         self.generate_graph()
 
     def append_new_line(self, price):
@@ -213,8 +222,12 @@ class StockGraph(NodePath, StockTextNodes):
         return min(*valid_points), max(*valid_points)
 
     def cleanup_graph(self):
+        for child in self.get_children():
+            child.remove_node()
         self.detach_node()
         NodePath.__init__(self, "stock_graph")
         if self.line_seg:
-            self.line_seg.reset()  # clean up existing line
+            # remove the heck out of the line seg
+            self.line_seg.reset()
+            del self.line_seg
             self.line_seg = None
