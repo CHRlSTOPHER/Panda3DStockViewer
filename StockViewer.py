@@ -22,6 +22,7 @@ class StockViewer(ShowBase):
         self.crumb = None
         self.cookie = None
         self.stock_graphs = {}
+        self.stock_graphs_list = []
         self.refresh_sequences = {}
         self.refresh_period = len(STOCKS)
         self.end_of_day = False
@@ -41,6 +42,7 @@ class StockViewer(ShowBase):
             if i >= SG.STOCK_LIMIT:  # limit the amount of graphs.
                 break
             investment = STOCKS.get(stock)
+            self.stock_graphs_list.append(stock)
             self.generate_sequence.append(Func(self.create_stock_graph,
                                                stock, investment, len(STOCKS)))
             self.generate_sequence.append((Func(self.adjust_graph, stock, i)))
@@ -72,6 +74,9 @@ class StockViewer(ShowBase):
     def refresh_graph(self, stock_name):
         graph = self.stock_graphs[stock_name]
         graph.update()
+        index = self.stock_graphs_list.index(stock_name)
+        graph.set_pos(SG.GRAPH_POSITIONS[index])
+        graph.set_scale(SG.GRAPH_SCALE)
         if graph.end_of_day:
             # occasionally chart data will not return the proper market end
             # time, making the code believe the market is still active.
@@ -84,5 +89,5 @@ class StockViewer(ShowBase):
 
 stock_viewer = StockViewer()
 stock_viewer.disable_mouse()
-stock_viewer.camera.set_pos(1.75, -32, 0)
+stock_viewer.camera.set_pos(1, -60, -.7)
 stock_viewer.run()

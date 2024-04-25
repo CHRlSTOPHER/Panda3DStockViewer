@@ -13,10 +13,10 @@ TRADE_PERIOD = "currentTradingPeriod"
 CHART_INTERVAL = ["1m", "2m", "5m"]
 CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
-WIN_SIZE = "1600 600"
+WIN_SIZE = "1600 950"
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
-STOCK_LIMIT = 6
+STOCK_LIMIT = 9
 
 GREEN = (.2, 1, .2, 1)
 RED = (1, .2, .2, 1)
@@ -41,14 +41,21 @@ INVEST_POS = (0.0, 0, -9.25)
 INVEST_SCALE = 1.9
 COMPARE_POS = (6.25, 0, -10.25)
 COMPARE_SCALE = 1.9
+HIGH_TEXT_POS = (-11, 0, 6)
+LOW_TEXT_POS = (-11, 0, -7)
+CLOSE_TEXT_X = 22
+LIMIT_TEXT_SCALE = 1.75
 
-X_POS = 15
-Z_POS = 10
+X_POS = 18
+Z_POS = 10.75
 GRAPH_POSITIONS = [
-    (-X_POS, 0, Z_POS / 2),
-    (0, 0, Z_POS / 2),
-    (X_POS, 0, Z_POS / 2),
-    (-X_POS, 0, -Z_POS / 2 + 2),
-    (0, 0, -Z_POS / 2 + 2),
-    (X_POS, 0, -Z_POS / 2 + 2),
+    (-X_POS, 0, Z_POS),
+    (0, 0, Z_POS),
+    (X_POS, 0, Z_POS),
+    (-X_POS, 0, 0),
+    (0, 0, 0),
+    (X_POS, 0, 0),
+    (-X_POS, 0, -Z_POS),
+    (0, 0, -Z_POS),
+    (X_POS, 0, -Z_POS),
 ]
