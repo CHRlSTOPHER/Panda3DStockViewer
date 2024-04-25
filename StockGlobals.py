@@ -15,6 +15,13 @@ CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
 WIN_SIZE = "1600 950"
 BG_COLOR = (.2, .2, .25, 1)
+BG_LINE_COLOR = (.85, .85, 1, 1)
+BG_LINE_POS = [
+    (-10.2, 0, -6.6),
+    (17.9, 0, -6.6),
+    (-10.2, 0, 6.6),
+    (17.9, 0, 6.6),
+]
 
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
@@ -45,8 +52,8 @@ COMPARE_POS = (6.25, 0, -10.25)
 COMPARE_SCALE = 1.9
 HIGH_TEXT_POS = (-11, 0, 6)
 LOW_TEXT_POS = (-11, 0, -7)
-CLOSE_TEXT_X = 22
-LIMIT_TEXT_SCALE = 1.75
+CLOSE_TEXT_X = 18
+LIMIT_TEXT_SCALE = 2.5
 
 X_POS = 18
 Z_POS = 10.75

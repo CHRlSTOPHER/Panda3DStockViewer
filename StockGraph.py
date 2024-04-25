@@ -31,23 +31,29 @@ class StockGraph(NodePath, StockTextNodes):
         self.crumb = crumb
         self.cookie = cookie
         self.chart_data = None
-        self.graph = None
+        self.end_time = None
+        self.previous_close = None
+        self.graph_points = None
+        self.high = 0
+        self.low = 0
         self.line_seg = None
+        self.last_pos = None
+        self.x = None
+        self.point = None
+        self.graph = None
         self.market_price = None
         self.company_data = None
-        self.graph_points = None
         self.last_minute = None
         self.last_price = 0
-        self.low = 0
-        self.high = 0
-
+        self.ratio = None
+        self.graph_nodes = []
         self.end_of_day = False
         self.draw_sequence = Sequence()
 
     def scrape_stock_data(self, get_limits=True):
         # we define this to determine the past graph points
         self.chart_data = self.get_chart_data()
-        if self.chart_data['chart']['result'] == None:
+        if self.chart_data['chart']['result'] is None:
             print(f"{self.stock_name} not found.")
             return False
         result = self.chart_data["chart"]["result"][0]
@@ -57,8 +63,8 @@ class StockGraph(NodePath, StockTextNodes):
         self.graph_points = result['indicators']['quote'][0]['close']
         if get_limits:
             self.low, self.high = self.get_low_and_high_price()
-            self.high = math.floor(self.high * 100)/100.0
-            self.low = math.floor(self.low * 100)/100.0
+            self.high = math.floor(self.high * 100) / 100.0
+            self.low = math.floor(self.low * 100) / 100.0
         self.previous_close = math.floor(self.previous_close * 100) / 100
         return True
 
@@ -117,10 +123,20 @@ class StockGraph(NodePath, StockTextNodes):
         graph_node = self.attach_new_node(geom_node)
         graph_node.set_pos(-10, 0, 18)
         graph_node.set_scale(SG.GRAPH_SX, 1, SG.GRAPH_SZ)
+        self.graph_nodes.append(graph_node)
         self.reparent_to(self.showbase.render)
 
     def create_bg_graph(self):
-        pass
+        self.bg_line = LineSegs()
+        self.bg_line.set_color(*SG.BG_LINE_COLOR)
+        self.bg_line.set_thickness(SG.LINE_THICKNESS)
+        # draw base line
+        self.bg_line.move_to(SG.BG_LINE_POS[0])
+        self.bg_line.draw_to(SG.BG_LINE_POS[1])
+        self.bg_line.move_to(SG.BG_LINE_POS[2])
+        self.bg_line.draw_to(SG.BG_LINE_POS[3])
+        self.bg_line_geom = self.bg_line.create()
+        self.bg_line_node = self.attach_new_node(self.bg_line_geom)
 
     def update(self):
         company_data = self.get_company_data()
@@ -128,7 +144,7 @@ class StockGraph(NodePath, StockTextNodes):
         market_time = result["price"]["regularMarketTime"]
         minutes = math.floor(market_time / 60)
         market_price = result["price"]["regularMarketPrice"]["raw"]
-        market_price = math.floor(market_price * 100)/100.0
+        market_price = math.floor(market_price * 100) / 100.0
         # check if market hours are over.
         if market_time >= self.end_time:
             self.end_of_day = True
@@ -156,10 +172,10 @@ class StockGraph(NodePath, StockTextNodes):
         if self.investment and market_price:
             # update the price and comparison text
             difference = market_price - self.investment
-            difference = math.floor(difference * 100)/100.0
+            difference = math.floor(difference * 100) / 100.0
             self.update_comparison_text(difference)
 
-        #print(f"{self.stock_name}: EPOCH: {math.floor(market_time / 60)},"
+        # print(f"{self.stock_name}: EPOCH: {math.floor(market_time / 60)},"
         #      f" ${market_price}")
 
     def remake_graph(self):
@@ -222,12 +238,10 @@ class StockGraph(NodePath, StockTextNodes):
         return min(*valid_points), max(*valid_points)
 
     def cleanup_graph(self):
-        for child in self.get_children():
-            child.remove_node()
-        self.detach_node()
-        NodePath.__init__(self, "stock_graph")
+        for line in self.graph_nodes:
+            line.remove_node()
+        self.draw_sequence.finish()
+        self.draw_sequence = Sequence()
         if self.line_seg:
-            # remove the heck out of the line seg
             self.line_seg.reset()
-            del self.line_seg
             self.line_seg = None

@@ -64,7 +64,7 @@ class StockTextNodes:
             "low_text", str(low), TextNode.ARight)
         # last close text
         self.close_text, self.close_text_node = self.generate_text_node(
-            "last_close_text", str(last_close), TextNode.ARight)
+            "last_close_text", str(last_close), TextNode.ALeft)
         self.high_text_node.set_pos(SG.HIGH_TEXT_POS)
         self.low_text_node.set_pos(SG.LOW_TEXT_POS)
         self.close_text_node.set_x(SG.CLOSE_TEXT_X)
