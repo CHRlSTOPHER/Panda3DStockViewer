@@ -14,6 +14,8 @@ CHART_INTERVAL = ["1m", "2m", "5m"]
 CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
 WIN_SIZE = "1600 950"
+BG_COLOR = (.2, .2, .25, 1)
+
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
 STOCK_LIMIT = 9

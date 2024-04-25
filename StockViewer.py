@@ -90,4 +90,5 @@ class StockViewer(ShowBase):
 stock_viewer = StockViewer()
 stock_viewer.disable_mouse()
 stock_viewer.camera.set_pos(1, -60, -.7)
+stock_viewer.set_background_color(SG.BG_COLOR)
 stock_viewer.run()
