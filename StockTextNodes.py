@@ -107,11 +107,11 @@ class StockTextNodes:
         self.low_text.set_text(str(low))
 
     def generate_text_node(self, name, text, alignment=None):
-        _text = TextNode(name)
-        _text.set_text(text)
-        _text.set_shadow(0.05, 0.05)
+        text_node = TextNode(name)
+        text_node.set_text(text)
+        text_node.set_shadow(0.05, 0.05)
         if alignment:
-            _text.set_align(alignment)
-        text_node = self.node.attach_new_node(_text)
-        text_node.set_depth_write(0)
-        return _text, text_node
+            text_node.set_align(alignment)
+        text_node_path = self.node.attach_new_node(text_node)
+        text_node_path.set_depth_write(0)
+        return text_node, text_node_path

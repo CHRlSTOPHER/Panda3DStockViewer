@@ -1,11 +1,18 @@
 {
-    "NVDA": 891.25,
+    "NVDA": null,
     "SMCI": null,
     "MSFT": null,
-    "GFAI": null,
+    "META": 440.65,
     "MSCI": null,
-    "QUBT": null,
-    "DTST": null,
-    "INUV": null,
-    "POAI": null
+    "GOOG": null,
+    "TSLA": null,
+    "NFLX": 559.64,
+    "DIS": null,
+    "AAPL": null,
+    "AMZN": null,
+    "TGT": null,
+    "FTNT": null,
+    "PYPL": null,
+    "UBER": 69.21,
+    "ABNB": null
 }

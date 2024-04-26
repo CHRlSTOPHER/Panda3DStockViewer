@@ -13,7 +13,7 @@ TRADE_PERIOD = "currentTradingPeriod"
 CHART_INTERVAL = ["1m", "2m", "5m"]
 CHART_RANGE = ["1d", "5d", "1m", "6m", "ytd", "1y", "5y"]
 
-WIN_SIZE = "1600 950"
+WIN_SIZE = "1700 950"
 BG_COLOR = (.2, .2, .25, 1)
 BG_LINE_COLOR = (.85, .85, 1, 1)
 BG_LINE_POS = [
@@ -25,7 +25,7 @@ BG_LINE_POS = [
 
 MARKET_DURATION = 390  # this is in minutes
 PAUSE_DURATION = 1.0  # time between web scrapes.
-STOCK_LIMIT = 9
+STOCK_LIMIT = 16
 
 GREEN = (.2, 1, .2, 1)
 RED = (1, .2, .2, 1)
@@ -37,7 +37,7 @@ Z_MULTIPLIER = 100
 X_MULTIPLIER = 6
 
 GRAPH_POS = (-10, 0, 18)
-GRAPH_SCALE = 0.4
+GRAPH_SCALE = 0.375
 # actual graph scale
 GRAPH_SX = .07
 GRAPH_SZ = -.24
@@ -58,14 +58,26 @@ LIMIT_TEXT_SCALE = 2.5
 
 X_POS = 18
 Z_POS = 10.75
+M_1 = 1.5
+M_2 = 0.5
 GRAPH_POSITIONS = [
-    (-X_POS, 0, Z_POS),
-    (0, 0, Z_POS),
-    (X_POS, 0, Z_POS),
-    (-X_POS, 0, 0),
-    (0, 0, 0),
-    (X_POS, 0, 0),
-    (-X_POS, 0, -Z_POS),
-    (0, 0, -Z_POS),
-    (X_POS, 0, -Z_POS),
+    (-X_POS * M_1, 0, Z_POS * M_1),
+    (-X_POS * M_2, 0, Z_POS * M_1),
+    (X_POS * M_2, 0, Z_POS * M_1),
+    (X_POS * M_1, 0, Z_POS * M_1),
+
+    (-X_POS * M_1, 0, Z_POS * M_2),
+    (-X_POS * M_2, 0, Z_POS * M_2),
+    (X_POS * M_2, 0, Z_POS * M_2),
+    (X_POS * M_1, 0, Z_POS * M_2),
+
+    (-X_POS * M_1, 0, Z_POS * -M_2),
+    (-X_POS * M_2, 0, Z_POS * -M_2),
+    (X_POS * M_2, 0, Z_POS * -M_2),
+    (X_POS * M_1, 0, Z_POS * -M_2),
+
+    (-X_POS * M_1, 0, Z_POS * -M_1),
+    (-X_POS * M_2, 0, Z_POS * -M_1),
+    (X_POS * M_2, 0, Z_POS * -M_1),
+    (X_POS * M_1, 0, Z_POS * -M_1)
 ]
